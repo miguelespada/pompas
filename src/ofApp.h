@@ -35,8 +35,9 @@ public:
     void guiEvent(ofxUIEventArgs &e);
     
 	
-	ofVideoGrabber cam;
-	ofImage thresh;
+    ofVideoGrabber cam;
+    ofImage thresh;
+    ofImage cropped;
     
     
     float thresholdValue;
@@ -59,5 +60,8 @@ public:
     float maxFeatures;
     float qualityLevel;
     float minDistance;
+    
+    float x, y, h, w;
+    bool keys[256] = {false};
 
 };

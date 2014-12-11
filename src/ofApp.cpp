@@ -6,6 +6,7 @@ using namespace ofxCv;
 void ofApp::setup() {
     cam.initGrabber(640, 480);
     thresh.allocate(640, 480, OF_IMAGE_GRAYSCALE);
+    cropped.allocate(640, 480, OF_IMAGE_GRAYSCALE);
     setGUI();
     gui->loadSettings("guiSettings.xml");
     ofSetLogLevel(OF_LOG_VERBOSE);
@@ -20,29 +21,32 @@ void ofApp::update() {
         blur(cam, (int) blurValue);
      
     	convertColor(cam, thresh, CV_RGB2GRAY);
-        threshold(thresh, thresholdValue);
-    
         
-        curFlow = &pyrLk;
+        cropped.allocate(w, h, OF_IMAGE_GRAYSCALE);
+        cropped.cropFrom(thresh, x, y, w, h);
+        threshold(cropped, thresholdValue);
         
-        pyrLk.setMaxFeatures( (int)maxFeatures );
-        pyrLk.setQualityLevel(qualityLevel );
-        pyrLk.setMinDistance( (int)minDistance );
-        pyrLk.setWindowSize( (int)winSize );
-        pyrLk.setMaxLevel( (int)maxLevel );
-        
-        thresh.update();
-        curFlow->calcOpticalFlow(thresh);
+//        curFlow = &pyrLk;
+//        
+//        pyrLk.setMaxFeatures( (int)maxFeatures );
+//        pyrLk.setQualityLevel(qualityLevel );
+//        pyrLk.setMinDistance( (int)minDistance );
+//        pyrLk.setWindowSize( (int)winSize );
+//        pyrLk.setMaxLevel( (int)maxLevel );
+//        
+          cropped.update();
+//        curFlow->calcOpticalFlow(thresh);
     }
 }
 
 void ofApp::draw() {
-	cam.draw(0, 0);
+    cam.draw(0, 0, 640, 480);
     
-    thresh.draw(640, 0, 320, 240);
-    curFlow->draw(0, 0);
-    
-    countNonZero(curFlow->));
+    cropped.draw(640, 0);
+    ofSetColor(255, 0, 0);
+    ofNoFill();
+    ofRect(x, y, w, h);
+    ofSetColor(255);
 }
 
 void ofApp::setGUI()
@@ -60,9 +64,16 @@ void ofApp::setGUI()
     gui->addSpacer();
     gui->addSlider("Blur", 0.0, 255.0, &blurValue)->setTriggerType(OFX_UI_TRIGGER_ALL);
     
+    gui->addSpacer();
+    gui->addSpacer();
+    gui->addLabel("Press & hold 'r' to Select ROI", OFX_UI_FONT_SMALL);
+    gui->addSlider("ROI X", 0, 640, &x);
+    gui->addSlider("ROI Y", 0, 480, &y);
+    gui->addSlider("ROI W", 0, 640, &w);
+    gui->addSlider("ROI H", 0, 480, &h);
     
     gui->addSpacer();
-
+    
 //    
 //     gui->addSlider("pyrScale", 0, 1, &pyrScale);
 //     gui->addSlider("levels", 1, 8, &levels);
@@ -97,6 +108,7 @@ void ofApp::guiEvent(ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+    keys[key] = false;
     
 }
 
@@ -107,12 +119,20 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    
+    if(keys['r']){
+        ofApp::w = (x - ofApp::x);
+        ofApp::h = (y - ofApp::y);
+        if(ofApp::w < 0) w = 0;
+        if(ofApp::h < 0) h = 0;
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    
+    if(keys['r']){
+        ofApp::x = x;
+        ofApp::y = y;
+    }
 }
 
 //--------------------------------------------------------------
@@ -142,13 +162,17 @@ void ofApp::exit(){
 }
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+    keys[key] = true;
     switch (key){
+        
         case 'h':
             gui->toggleVisible();
             break;
         case 's':
             cam.videoSettings();
+            break;
+        case 'c':
+            ofShowCursor();
             break;
         default:
             break;

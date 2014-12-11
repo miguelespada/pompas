@@ -2,23 +2,43 @@
     <Kind>40</Kind>
     <Name>OFX_UI_WIDGET_CANVAS</Name>
     <IsMinified>0</IsMinified>
-    <XPosition>4.000000000</XPosition>
-    <YPosition>6.000000000</YPosition>
+    <XPosition>849.000000000</XPosition>
+    <YPosition>17.000000000</YPosition>
 </Canvas>
 <Widget>
     <Kind>4</Kind>
     <Name>THRESHOLD</Name>
-    <Value>71.600990295</Value>
+    <Value>80.394088745</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>Blur</Name>
-    <Value>38.940887451</Value>
+    <Value>15.073891640</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>ROI X</Name>
+    <Value>100.886695862</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>ROI Y</Name>
+    <Value>111.133003235</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>ROI W</Name>
+    <Value>353.103454590</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>ROI H</Name>
+    <Value>281.379333496</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>winSize</Name>
-    <Value>14.935960770</Value>
+    <Value>12.275861740</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -28,7 +48,7 @@
 <Widget>
     <Kind>4</Kind>
     <Name>maxFeatures</Name>
-    <Value>360.246307373</Value>
+    <Value>197.847290039</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
