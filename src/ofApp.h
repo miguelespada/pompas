@@ -29,6 +29,7 @@ public:
     
     
     ofxOscSender sender;
+	ofxCv::RunningBackground background;
     
     void setGUI();
     ofxUISuperCanvas *gui;

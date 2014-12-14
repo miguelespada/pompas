@@ -4,6 +4,7 @@ using namespace cv;
 using namespace ofxCv;
 
 void ofApp::setup() {
+    cam.setDeviceID(1);
     cam.initGrabber(640, 480);
     thresh.allocate(640, 480, OF_IMAGE_GRAYSCALE);
     cropped.allocate(640, 480, OF_IMAGE_GRAYSCALE);
@@ -14,6 +15,8 @@ void ofApp::setup() {
     curFlow = &farneback;
     curFlow = &pyrLk;
     sender.setup(HOST, PORT);
+	background.setLearningTime(100);
+	background.setThresholdValue(10);
 }
 
 void ofApp::update() {
@@ -23,7 +26,8 @@ void ofApp::update() {
      
     	convertColor(cam, thresh, CV_RGB2GRAY);
     
-
+        
+		background.update(cam, thresh);
         
         if(points.size() > 0){
             ofxCv::fillPoly(points, mask);

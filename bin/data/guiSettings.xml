@@ -8,32 +8,32 @@
 <Widget>
     <Kind>4</Kind>
     <Name>THRESHOLD</Name>
-    <Value>80.394088745</Value>
+    <Value>2.512315273</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>Blur</Name>
-    <Value>15.073891640</Value>
+    <Value>10.049261093</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI X</Name>
-    <Value>223.842376709</Value>
+    <Value>173.399017334</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI Y</Name>
-    <Value>120.591133118</Value>
+    <Value>182.068969727</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI W</Name>
-    <Value>254.000000000</Value>
+    <Value>380.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI H</Name>
-    <Value>188.000000000</Value>
+    <Value>103.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
