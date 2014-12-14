@@ -7,6 +7,7 @@ void ofApp::setup() {
     cam.initGrabber(640, 480);
     thresh.allocate(640, 480, OF_IMAGE_GRAYSCALE);
     cropped.allocate(640, 480, OF_IMAGE_GRAYSCALE);
+    mask.allocate(640, 480, OF_IMAGE_GRAYSCALE);
     setGUI();
     gui->loadSettings("guiSettings.xml");
     ofSetLogLevel(OF_LOG_VERBOSE);
@@ -21,11 +22,22 @@ void ofApp::update() {
         blur(cam, (int) blurValue);
      
     	convertColor(cam, thresh, CV_RGB2GRAY);
+    
+
         
+        if(points.size() > 0){
+            ofxCv::fillPoly(points, mask);
+            subtract(thresh, mask, thresh);
+        }
+        
+        if(points2.size() > 0){
+            ofxCv::fillPoly(points2, mask);
+            subtract(thresh, mask, thresh);
+        }
         cropped.allocate(w, h, OF_IMAGE_GRAYSCALE);
         cropped.cropFrom(thresh, x, y, w, h);
         threshold(cropped, thresholdValue);
-        
+
 //        curFlow = &pyrLk;
 //        
 //        pyrLk.setMaxFeatures( (int)maxFeatures );
@@ -35,12 +47,13 @@ void ofApp::update() {
 //        pyrLk.setMaxLevel( (int)maxLevel );
 //        
           cropped.update();
+          thresh.update();
 //        curFlow->calcOpticalFlow(thresh);
     }
 }
 
 void ofApp::draw() {
-    cam.draw(0, 0, 640, 480);
+    thresh.draw(0, 0, 640, 480);
     
     cropped.draw(640, 0);
     ofSetColor(255, 0, 0);
@@ -132,6 +145,23 @@ void ofApp::mousePressed(int x, int y, int button){
     if(keys['r']){
         ofApp::x = x;
         ofApp::y = y;
+    }
+    if(keys['1']){
+        if(points.size() == 4){
+            points.clear();
+        }
+        else {
+            points.push_back(cv::Point(x, y));
+        }
+    }
+    
+    if(keys['2']){
+        if(points2.size() == 4){
+            points2.clear();
+        }
+        else{
+            points2.push_back(cv::Point(x, y));
+        }
     }
 }
 

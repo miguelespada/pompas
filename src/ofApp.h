@@ -39,6 +39,7 @@ public:
     ofImage thresh;
     ofImage cropped;
     
+    ofImage mask;
     
     float thresholdValue;
     float blurValue;
@@ -63,5 +64,7 @@ public:
     
     float x, y, h, w;
     bool keys[256] = {false};
-
+    
+    
+    vector<cv::Point> points, points2;
 };
