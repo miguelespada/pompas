@@ -8,62 +8,75 @@ void ofApp::setup() {
     cam.initGrabber(640, 480);
     thresh.allocate(640, 480, OF_IMAGE_GRAYSCALE);
     cropped.allocate(640, 480, OF_IMAGE_GRAYSCALE);
-    mask.allocate(640, 480, OF_IMAGE_GRAYSCALE);
     setGUI();
     gui->loadSettings("guiSettings.xml");
     ofSetLogLevel(OF_LOG_VERBOSE);
-    curFlow = &farneback;
-    curFlow = &pyrLk;
+    
     sender.setup(HOST, PORT);
+    
 	background.setLearningTime(100);
-	background.setThresholdValue(10);
 }
 
 void ofApp::update() {
 	cam.update();
     if(cam.isFrameNew()) {
-        blur(cam, (int) blurValue);
      
     	convertColor(cam, thresh, CV_RGB2GRAY);
-    
-        
+        background.setThresholdValue(thresholdValue);
 		background.update(cam, thresh);
         
-        if(points.size() > 0){
-            ofxCv::fillPoly(points, mask);
-            subtract(thresh, mask, thresh);
-        }
+        thresh.update();
         
-        if(points2.size() > 0){
-            ofxCv::fillPoly(points2, mask);
-            subtract(thresh, mask, thresh);
-        }
         cropped.allocate(w, h, OF_IMAGE_GRAYSCALE);
         cropped.cropFrom(thresh, x, y, w, h);
-        threshold(cropped, thresholdValue);
-
-//        curFlow = &pyrLk;
-//        
-//        pyrLk.setMaxFeatures( (int)maxFeatures );
-//        pyrLk.setQualityLevel(qualityLevel );
-//        pyrLk.setMinDistance( (int)minDistance );
-//        pyrLk.setWindowSize( (int)winSize );
-//        pyrLk.setMaxLevel( (int)maxLevel );
-//        
-          cropped.update();
-          thresh.update();
-//        curFlow->calcOpticalFlow(thresh);
+    
+        blur(cropped, (int) blurValue);
+        dilate(cropped);
+        cropped.update();
+        media = media * smoothValue + (1 - smoothValue) * mean(toCv(cropped))[0];
     }
 }
 
 void ofApp::draw() {
+    ofPushStyle();
+
     thresh.draw(0, 0, 640, 480);
     
-    cropped.draw(640, 0);
-    ofSetColor(255, 0, 0);
+    if(media > detection){
+        ofSetColor(0, 255, 0);
+        if(!state){
+            state = true;
+            ofxOscMessage m;
+            m.setAddress("/on");
+            sender.sendMessage(m);
+        }
+    }
+    else{
+        ofSetColor(255, 0, 0);
+        if(state){
+            state = false;
+            ofxOscMessage m;
+            m.setAddress("/off");
+            sender.sendMessage(m);
+        }
+    }
     ofNoFill();
+    
+    cropped.draw(x, y, w, h);
+
     ofRect(x, y, w, h);
     ofSetColor(255);
+    
+    ofPushMatrix();
+    ofTranslate(640, 0);
+    
+    ofLine(0, ofGetHeight()  - detection, 640, ofGetHeight() - detection);
+    graph_x = (graph_x + 1) % 640;
+    ofLine(graph_x, ofGetHeight(), graph_x, ofGetHeight() - media);
+    
+    ofDrawBitmapString(ofToString(media), 20, 300);
+    ofPopMatrix();
+    ofPopStyle();
 }
 
 void ofApp::setGUI()
@@ -76,12 +89,13 @@ void ofApp::setGUI()
     gui->addFPS();
     
     gui->addSpacer();
-    gui->addSlider("THRESHOLD", 0.0, 255.0, &thresholdValue)->setTriggerType(OFX_UI_TRIGGER_ALL);
-    
+    gui->addSlider("Detection", 1, 50, &detection);
     gui->addSpacer();
-    gui->addSlider("Blur", 0.0, 255.0, &blurValue)->setTriggerType(OFX_UI_TRIGGER_ALL);
-    
+    gui->addSlider("Smooth", 0, 1, &smoothValue);
     gui->addSpacer();
+    gui->addSlider("THRESHOLD", 0.0, 255.0, &thresholdValue);
+    gui->addSpacer();
+    gui->addSlider("Blur", 0.0, 255.0, &blurValue);
     gui->addSpacer();
     gui->addLabel("Press & hold 'r' to Select ROI", OFX_UI_FONT_SMALL);
     gui->addSlider("ROI X", 0, 640, &x);
@@ -89,37 +103,12 @@ void ofApp::setGUI()
     gui->addSlider("ROI W", 0, 640, &w);
     gui->addSlider("ROI H", 0, 480, &h);
     
-    gui->addSpacer();
-    
-//    
-//     gui->addSlider("pyrScale", 0, 1, &pyrScale);
-//     gui->addSlider("levels", 1, 8, &levels);
-//     gui->addSlider("winsize", 4, 64, &winsize);
-//     gui->addSlider("iterations", 1, 8, &iterations);
-//     gui->addSlider("polyN", 5, 10, &polyN);
-//     gui->addSlider("polySigma", 1.1, 2, &polySigma);
-//    
-//    
-//    gui->addSpacer();
-
-    
-    gui->addSlider("winSize", 4, 64, &winSize);
-    gui->addSlider("maxLevel", 0, 8, &maxLevel);
-    
-    gui->addSlider("maxFeatures", 1, 1000, &maxFeatures);
-    gui->addSlider("qualityLevel", 0.001, .02, &qualityLevel);
-    gui->addSlider("minDistance", 1, 16, &minDistance);
-
-    
     gui->autoSizeToFitWidgets();
     ofAddListener(gui->newGUIEvent,this,&ofApp::guiEvent);
 }
 
 
 void ofApp::guiEvent(ofxUIEventArgs &e){
-    string name = e.getName();
-    int kind = e.getKind();
-    ofLogVerbose() << "got event from: " << name  << " " << kind;
 }
 
 
@@ -149,23 +138,6 @@ void ofApp::mousePressed(int x, int y, int button){
     if(keys['r']){
         ofApp::x = x;
         ofApp::y = y;
-    }
-    if(keys['1']){
-        if(points.size() == 4){
-            points.clear();
-        }
-        else {
-            points.push_back(cv::Point(x, y));
-        }
-    }
-    
-    if(keys['2']){
-        if(points2.size() == 4){
-            points2.clear();
-        }
-        else{
-            points2.push_back(cv::Point(x, y));
-        }
     }
 }
 

@@ -7,56 +7,36 @@
 </Canvas>
 <Widget>
     <Kind>4</Kind>
+    <Name>Detection</Name>
+    <Value>28.517240524</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
     <Name>THRESHOLD</Name>
-    <Value>2.512315273</Value>
+    <Value>15.073891640</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>Blur</Name>
-    <Value>10.049261093</Value>
+    <Value>21.354679108</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI X</Name>
-    <Value>173.399017334</Value>
+    <Value>153.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI Y</Name>
-    <Value>182.068969727</Value>
+    <Value>167.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI W</Name>
-    <Value>380.000000000</Value>
+    <Value>340.000000000</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>ROI H</Name>
-    <Value>103.000000000</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>winSize</Name>
-    <Value>12.275861740</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>maxLevel</Name>
-    <Value>0.000000000</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>maxFeatures</Name>
-    <Value>197.847290039</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>qualityLevel</Name>
-    <Value>0.002591133</Value>
-</Widget>
-<Widget>
-    <Kind>4</Kind>
-    <Name>minDistance</Name>
-    <Value>16.000000000</Value>
+    <Value>107.000000000</Value>
 </Widget>

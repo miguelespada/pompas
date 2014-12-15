@@ -6,7 +6,7 @@
 #include "ofxOsc.h"
 
 #define HOST "localhost"
-#define PORT 12345
+#define PORT 8000
 
 class ofApp : public ofBaseApp {
 public:
@@ -44,28 +44,15 @@ public:
     
     float thresholdValue;
     float blurValue;
-    
-    ofxCv::FlowFarneback farneback;
-    ofxCv::FlowPyrLK pyrLk;
-    
-    ofxCv::Flow* curFlow;
-    
-    float pyrScale;
-    float levels;
-    float winsize;
-    float iterations;
-    float polyN;
-    float polySigma;
-    
-    float winSize;
-    float maxLevel;
-    float maxFeatures;
-    float qualityLevel;
-    float minDistance;
+    float media;
     
     float x, y, h, w;
     bool keys[256] = {false};
     
     
     vector<cv::Point> points, points2;
+    int graph_x = 0;
+    float detection;
+    bool state;
+    float smoothValue;
 };
